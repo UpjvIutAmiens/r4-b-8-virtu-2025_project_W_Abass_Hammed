@@ -1,9 +1,12 @@
 import express, { type Application } from 'express';
 import cors, { type CorsOptions } from 'cors';
 import { requireRequestId } from '../middlewares/base';
+import filmsRoutes from './films';
 
 class Routes {
-  constructor(app: Application) {}
+  constructor(app: Application) {
+    app.use('/api/v1', filmsRoutes);
+  }
 }
 
 export default class Server {
@@ -19,7 +22,6 @@ export default class Server {
 
     app.use((req, res, next) => {
       res.header('Access-Control-Allow-Methods', 'GET POST OPTIONS');
-      res.header('Access-Control-Expose-Headers', 'X-New-Token');
       next();
     });
     app.use(cors(corsOptions));

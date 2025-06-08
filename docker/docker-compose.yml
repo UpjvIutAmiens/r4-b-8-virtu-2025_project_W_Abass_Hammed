@@ -10,9 +10,13 @@ services:
       POSTGRES_HOST: postgres
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-filmo_password}
       POSTGRES_PORT: ${POSTGRES_PORT:-5432}
+      REDIS_URL: redis://redis:6379
+      OMDB_API_KEY: ${OMDB_API_KEY:-ab21592a}
     restart: unless-stopped
     depends_on:
       postgres:
+        condition: service_healthy
+      redis:
         condition: service_healthy
     networks:
       - movie-network
@@ -24,8 +28,8 @@ services:
     container_name: postgres
     environment:
       POSTGRES_DB: ${POSTGRES_DB:-filmodb}
-      POSTGRES_USER: ${DB_USER:-filmo_user}
-      POSTGRES_PASSWORD: ${DB_PASSWORD:-filmo_password}
+      POSTGRES_USER: ${POSTGRES_USER:-filmo_user}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-filmo_password}
     networks:
       - movie-network
     volumes:
@@ -34,11 +38,24 @@ services:
       test:
         [
           "CMD-SHELL",
-          "pg_isready -U ${DB_USER:-filmo_user} -d ${POSTGRES_DB:-filmodb}",
+          "pg_isready -U ${POSTGRES_USER:-filmo_user} -d ${POSTGRES_DB:-filmodb}",
         ]
       interval: 5s
       timeout: 5s
       retries: 10
+
+  redis:
+    image: redis:7-alpine
+    container_name: redis
+    networks:
+      - movie-network
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+    volumes:
+      - redis-data:/data
 
   caddy:
     image: caddy:alpine
@@ -53,8 +70,22 @@ services:
     networks:
       - movie-network
 
+  client:
+    build:
+      context: ../src/frontend
+      dockerfile: ../../docker/frontend/Dockerfile
+    container_name: client
+    restart: unless-stopped
+    depends_on:
+      - server
+    networks:
+      - movie-network
+    expose:
+      - 5000
+
 networks:
   movie-network:
 
 volumes:
   postgres-data:
+  redis-data:
