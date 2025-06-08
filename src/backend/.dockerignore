@@ -1,0 +1,17 @@
+node_modules
+tests
+Dockerfile
+.git
+.gitignore
+.dockerignore
+docker-compose.yml
+tsconfig.json
+.eslint-ignore
+LICENSE.txt
+README.md
+public
+.husky
+.vscode
+dist
+.github
+.prettierrc

@@ -1,0 +1,11 @@
+.github
+.vscode
+node_modules
+public
+.husky
+.prettierignore
+.prettierrc
+package-lock.json
+dist
+Dockerfile
+docker-compose.yml
