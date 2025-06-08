@@ -9,6 +9,17 @@ class FilmsRepository {
     const db = new Database(dbConfig);
     this.query = db.query.bind(db);
   }
+
+  async getTest() {
+    const sql = 'SELECT * FROM films LIMIT 100';
+    try {
+      const result = await this.query(sql);
+      return result;
+    } catch (error) {
+      console.error('Error executing query:', error);
+      throw error;
+    }
+  }
 }
 
 export default new FilmsRepository();

@@ -1,5 +1,4 @@
-CREATE DATABASE IF NOT EXISTS filmodb;
-USE filmodb;
+CREATE EXTENSION IF NOT EXISTS "pgcrypto";
 
 CREATE TABLE IF NOT EXISTS films (
     tconst VARCHAR(20) PRIMARY KEY,
@@ -7,11 +6,10 @@ CREATE TABLE IF NOT EXISTS films (
 );
 
 CREATE TABLE IF NOT EXISTS ratings (
-    id SERIAL PRIMARY KEY,
-    tconst VARCHAR(20),
-    rating TINYINT UNSIGNED,
-    created_at TIMESTAMPTZ DEFAULT NOW(),
-    FOREIGN KEY (tconst) REFERENCES films(tconst) ON DELETE CASCADE
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    tconst VARCHAR(20) NOT NULL REFERENCES films(tconst) ON DELETE CASCADE,
+    rating SMALLINT NOT NULL CHECK (rating BETWEEN 1 AND 5),
+    created_at TIMESTAMPTZ DEFAULT NOW()
 );
 
-\copy films (tconst) FROM '/docker-entrypoint-initdb.d/tconst_list.txt';
+CREATE INDEX IF NOT EXISTS ratings_tconst_idx ON ratings(tconst);

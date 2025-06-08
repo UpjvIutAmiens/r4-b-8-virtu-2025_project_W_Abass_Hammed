@@ -4,24 +4,38 @@ services:
       context: ../src/backend
       dockerfile: ../../docker/backend/Dockerfile
     container_name: server
-    env_file:
-      - .env
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB:-filmodb}
+      POSTGRES_USER: ${POSTGRES_USER:-filmo_user}
+      POSTGRES_HOST: postgres
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-filmo_password}
+      POSTGRES_PORT: ${POSTGRES_PORT:-5432}
     restart: unless-stopped
     depends_on:
       postgres:
         condition: service_healthy
+    networks:
+      - movie-network
+    expose:
+      - 3000
 
   postgres:
     build: ./postgres
     container_name: postgres
     environment:
-      POSTGRES_DB: filmodb
-      POSTGRES_USER: filmo_user
-      POSTGRES_PASSWORD: filmo_password
+      POSTGRES_DB: ${POSTGRES_DB:-filmodb}
+      POSTGRES_USER: ${DB_USER:-filmo_user}
+      POSTGRES_PASSWORD: ${DB_PASSWORD:-filmo_password}
+    networks:
+      - movie-network
     volumes:
       - postgres-data:/var/lib/postgresql/data
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U filmo_user -d filmodb"]
+      test:
+        [
+          "CMD-SHELL",
+          "pg_isready -U ${DB_USER:-filmo_user} -d ${POSTGRES_DB:-filmodb}",
+        ]
       interval: 5s
       timeout: 5s
       retries: 10
@@ -43,4 +57,4 @@ networks:
   movie-network:
 
 volumes:
-  postgres:
+  postgres-data:
