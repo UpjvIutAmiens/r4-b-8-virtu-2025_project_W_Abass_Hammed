@@ -5,6 +5,14 @@
 
 @config '../../tailwind.config.ts';
 
+/*
+  The default border color has changed to `currentcolor` in Tailwind CSS v4,
+  so we've added these compatibility styles to make sure everything still
+  looks the same as it did with Tailwind CSS v3.
+
+  If we ever want to remove these styles, we need to add an explicit border
+  color utility to any element that depends on these defaults.
+*/
 @layer base {
   *,
   ::after,
@@ -416,4 +424,26 @@ body {
 .custom-div-icon {
   background: none;
   border: none;
+}
+
+.custom-marker {
+  cursor: pointer;
+  transition: transform 0.2s ease;
+}
+
+.custom-marker:hover {
+  transform: scale(1.1);
+}
+
+.custom-marker-icon {
+  background: none;
+  border: none;
+}
+
+.custom-marker-icon svg {
+  transition: transform 0.2s ease;
+}
+
+.custom-marker-icon:hover svg {
+  transform: scale(1.1);
 }

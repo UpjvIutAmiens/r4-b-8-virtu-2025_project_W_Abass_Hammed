@@ -17,10 +17,10 @@ export interface FilmDetails {
   Website: string;
 }
 
-interface RatingSummary {
+export interface RatingSummary {
   tconst: string;
   averageRating: number;
   voteCount: number;
 }
 
-interface TopFilm extends FilmDetails, RatingSummary {}
+export interface TopFilm extends FilmDetails, RatingSummary {}
