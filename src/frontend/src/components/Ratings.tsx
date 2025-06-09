@@ -6,6 +6,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/card";
 import { Alert, AlertDescription } from "@/components/alert";
 import { useRatingQuery } from "@/data/films/get-note";
 import { toast } from "sonner";
+import { useRateFilmMutation } from "@/data/films/rate-film";
 
 interface MovieRatingProps {
   tconst: string;
@@ -17,6 +18,15 @@ export default function MovieRating({ tconst }: MovieRatingProps) {
   const [hasRated, setHasRated] = useState<boolean>(false);
 
   const { data: ratingData, error, isLoading } = useRatingQuery(tconst);
+
+  const { mutate: rateFilm } = useRateFilmMutation({
+    onSuccess: (data) => {
+      toast.success("Rating submitted successfully!");
+    },
+    onError: (error) => {
+      console.error("Rating failed:", error.message);
+    },
+  });
 
   useEffect(() => {
     const ratedMovies = JSON.parse(localStorage.getItem("ratedMovies") || "{}");
@@ -39,8 +49,8 @@ export default function MovieRating({ tconst }: MovieRatingProps) {
 
     setUserRating(rating);
     setHasRated(true);
+    rateFilm({ tconst, rating });
 
-    toast.success("Thank you for your rating!");
     setHoveredRating(0);
   };
 

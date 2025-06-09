@@ -1,15 +1,21 @@
 "use client";
 
 import Image from "next/image";
-import { Film, Calendar, Clock, Award } from "lucide-react";
+import { Film, Calendar, Clock, Award, RefreshCw, Trophy } from "lucide-react";
 import { Badge } from "@/components/badge";
 import MovieRating from "./Ratings";
 import { useFilmQuery } from "@/data/films/get-film";
 import { FilmDetails } from "@/types";
 import Loading from "./loading";
+import { Button } from "./button";
+import { Dispatch, SetStateAction } from "react";
 
-const RandomFilm = () => {
-  const { data: movie, isLoading, error } = useFilmQuery();
+interface RandomFilmProps {
+  showBestRated: Dispatch<SetStateAction<boolean>>;
+}
+
+const RandomFilm = ({ showBestRated }: RandomFilmProps) => {
+  const { data: movie, isLoading, error, refetch } = useFilmQuery();
 
   const PosterCard = ({ movie }: { movie: FilmDetails }) => (
     <div className="border bg-background relative overflow-hidden grid grid-cols-12 rounded-lg p-5 md:p-8">
@@ -126,6 +132,27 @@ const RandomFilm = () => {
                   <span className="text-foreground-light">{movie.Awards}</span>
                 </div>
               )}
+            </div>
+
+            <div className="flex flex-wrap gap-3 mt-auto">
+              <Button
+                onClick={() => refetch()}
+                variant="default"
+                size="lg"
+                className="flex items-center gap-2"
+              >
+                <RefreshCw className="w-4 h-4" />
+                New Movie
+              </Button>
+              <Button
+                onClick={() => showBestRated(true)}
+                variant={"outline"}
+                size="lg"
+                className="flex items-center gap-2"
+              >
+                <Trophy className="w-4 h-4" />
+                Classement
+              </Button>
             </div>
           </div>
         </div>

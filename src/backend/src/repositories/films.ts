@@ -4,6 +4,7 @@ import { dbConfig } from '../model/connect';
 import fetch from 'node-fetch';
 import Redis from 'ioredis';
 import { v4 as uuidv4 } from 'uuid';
+import { consoleLogger } from '../services/logger';
 
 const OMDb_API_KEY = process.env.OMDB_API_KEY!;
 const REDIS_URL = process.env.REDIS_URL!;
@@ -140,7 +141,7 @@ export default class FilmsRepository {
           voteCount: film.count,
         });
       } catch (error) {
-        console.error(`Skipping film ${film.tconst}:`, error.message);
+        consoleLogger.error(`Skipping film ${film.tconst}:`, error.message);
       }
 
       // Rate limiting: 2 requests per second (OMDb limit: 1000/day)

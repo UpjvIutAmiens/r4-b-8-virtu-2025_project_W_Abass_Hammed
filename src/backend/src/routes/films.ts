@@ -42,10 +42,7 @@ class FilmsRoutes {
     });
     this.router.get('/top', async (req, res) => {
       try {
-        const { page, pageSize } = req.query;
-        const pageNumber = parseInt(page as string, 10) || 1;
-        const pageSizeNumber = parseInt(pageSize as string, 10) || 10;
-        const topFilms = await this.controller.getTopFilms(pageNumber, pageSizeNumber);
+        const topFilms = await this.controller.getTopFilms();
         res.json(topFilms);
       } catch (error) {
         consoleLogger.error('[FilmsRoutes::GetTopFilms]', error);
