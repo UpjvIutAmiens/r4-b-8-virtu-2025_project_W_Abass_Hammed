@@ -88,21 +88,12 @@ export default class FilmsRepository {
     return filmDetails;
   }
 
-  async saveRating(tconst: string, rating: number, voteToken: string): Promise<void> {
+  async saveRating(tconst: string, rating: number): Promise<void> {
     if (rating < 1 || rating > 5) {
       throw new Error('Invalid rating value');
     }
 
-    const tokenKey = `vote:${tconst}:${voteToken}`;
-    const tokenExists = await this.redis.exists(tokenKey);
-
-    if (tokenExists) {
-      throw new Error('Duplicate vote detected');
-    }
-
     await this.query(`INSERT INTO ratings (tconst, rating) VALUES ($1, $2)`, [tconst, rating]);
-
-    await this.redis.set(tokenKey, '1', 'EX', 2592000);
   }
 
   async getFilmRating(tconst: string): Promise<RatingSummary> {

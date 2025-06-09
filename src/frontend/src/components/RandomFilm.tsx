@@ -6,6 +6,7 @@ import { Badge } from "@/components/badge";
 import MovieRating from "./Ratings";
 import { useFilmQuery } from "@/data/films/get-film";
 import { FilmDetails } from "@/types";
+import Loading from "./loading";
 
 const RandomFilm = () => {
   const { data: movie, isLoading, error } = useFilmQuery();
@@ -35,11 +36,11 @@ const RandomFilm = () => {
 
   if (isLoading) {
     return (
-      <div className="relative z-10 w-full bg-alternative border-b max-w-none mb-16 md:mb-12 xl:mb-0">
+      <div className="h-full w-full bg-alternative max-w-none">
         <div className="max-w-7xl px-5 mx-auto py-8 sm:pb-16 sm:pt-12 xl:pt-16 flex items-center justify-center">
           <div className="text-center space-y-4">
-            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-foreground mx-auto"></div>
-            <p className="text-foreground-light">Loading a random movie...</p>
+            <Loading />
+            <p className="text-foreground-light">Chargement en cours...</p>
           </div>
         </div>
       </div>
@@ -48,7 +49,7 @@ const RandomFilm = () => {
 
   if (error || !movie) {
     return (
-      <div className="relative z-10 w-full bg-alternative border-b max-w-none mb-16 md:mb-12 xl:mb-0">
+      <div className="h-full w-full bg-alternative border-b max-w-none mb-16 md:mb-12 xl:mb-0">
         <div className="max-w-7xl px-5 mx-auto py-8 sm:pb-16 sm:pt-12 xl:pt-16 flex items-center justify-center">
           <div className="text-center space-y-4">
             <p className="text-destructive">Failed to load movie</p>

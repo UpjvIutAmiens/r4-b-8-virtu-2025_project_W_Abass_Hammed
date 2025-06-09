@@ -21,10 +21,10 @@ class FilmsRoutes {
       }
     });
     this.router.post('/note', async (req, res) => {
-      const { tconst, rating, voteToken } = req.body;
+      const { tconst, rating } = req.body;
 
       try {
-        await this.controller.saveRating(tconst, rating, voteToken);
+        await this.controller.saveRating(tconst, rating);
         res.status(201).json({ success: true });
       } catch (error) {
         consoleLogger.error('[FilmsRoutes::SaveRating]', error);
@@ -42,7 +42,10 @@ class FilmsRoutes {
     });
     this.router.get('/top', async (req, res) => {
       try {
-        const topFilms = await this.controller.getTopFilms();
+        const { page, pageSize } = req.query;
+        const pageNumber = parseInt(page as string, 10) || 1;
+        const pageSizeNumber = parseInt(pageSize as string, 10) || 10;
+        const topFilms = await this.controller.getTopFilms(pageNumber, pageSizeNumber);
         res.json(topFilms);
       } catch (error) {
         consoleLogger.error('[FilmsRoutes::GetTopFilms]', error);

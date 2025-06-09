@@ -1,10 +1,11 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Star, Users, AlertCircle } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/card";
 import { Alert, AlertDescription } from "@/components/alert";
 import { useRatingQuery } from "@/data/films/get-note";
+import { toast } from "sonner";
 
 interface MovieRatingProps {
   tconst: string;
@@ -17,11 +18,30 @@ export default function MovieRating({ tconst }: MovieRatingProps) {
 
   const { data: ratingData, error, isLoading } = useRatingQuery(tconst);
 
+  useEffect(() => {
+    const ratedMovies = JSON.parse(localStorage.getItem("ratedMovies") || "{}");
+    if (ratedMovies[tconst]) {
+      setUserRating(ratedMovies[tconst]);
+      setHasRated(true);
+    }
+  }, [tconst]);
+
   const handleRating = (rating: number) => {
+    const ratedMovies = JSON.parse(localStorage.getItem("ratedMovies") || "{}");
+
+    if (ratedMovies[tconst]) {
+      toast.error("You have already rated this movie.");
+      return;
+    }
+
+    ratedMovies[tconst] = rating;
+    localStorage.setItem("ratedMovies", JSON.stringify(ratedMovies));
+
     setUserRating(rating);
     setHasRated(true);
-    // In a real app, you would send this rating to your API
-    console.log(`User rated movie ${tconst} with ${rating} stars`);
+
+    toast.success("Thank you for your rating!");
+    setHoveredRating(0);
   };
 
   const renderStars = (rating: number, interactive = false) => {
@@ -59,7 +79,7 @@ export default function MovieRating({ tconst }: MovieRatingProps) {
         <div className="space-y-2">
           <p className="text-xs font-medium">Your Rating:</p>
           <div className="flex items-center gap-1">
-            {renderStars(userRating, true)}
+            {renderStars(userRating, !hasRated)}
           </div>
           {hasRated && (
             <p className="text-xs text-green-600">Thank you for rating!</p>
