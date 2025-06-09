@@ -16,20 +16,17 @@ async function getFilm(signal?: AbortSignal) {
 
 type FilmQueryKey = ["film"];
 
-export const useFilmQuery = <TData = FilmDetails>(
-  tconst: string,
-  {
-    enabled = true,
-    ...options
-  }: Omit<
-    UseQueryOptions<FilmDetails, ResponseError, TData, FilmQueryKey>,
-    "queryKey" | "queryFn"
-  > = {},
-) =>
+export const useFilmQuery = <TData = FilmDetails>({
+  enabled = true,
+  ...options
+}: Omit<
+  UseQueryOptions<FilmDetails, ResponseError, TData, FilmQueryKey>,
+  "queryKey" | "queryFn"
+> = {}) =>
   useQuery<FilmDetails, ResponseError, TData, FilmQueryKey>({
     queryKey: ["film"],
     queryFn: ({ signal }) => getFilm(signal),
     ...options,
-    enabled: enabled && !!tconst,
+    enabled: enabled,
     refetchOnWindowFocus: false,
   });

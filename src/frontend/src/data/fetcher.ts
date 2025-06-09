@@ -1,4 +1,3 @@
-import { getCookie, setCookie } from "cookies-next";
 import createClient from "openapi-fetch";
 import { v4 as uuidv4 } from "uuid";
 
@@ -64,8 +63,8 @@ export const handleError = (error: unknown): never => {
       "msg" in error && typeof error.msg === "string"
         ? error.msg
         : "message" in error && typeof error.message === "string"
-        ? error.message
-        : undefined;
+          ? error.message
+          : undefined;
 
     const errorCode =
       "code" in error && typeof error.code === "number"
