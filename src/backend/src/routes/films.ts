@@ -40,6 +40,15 @@ class FilmsRoutes {
         res.status(500).json({ error: 'Failed to fetch film rating' });
       }
     });
+    this.router.get('/top', async (req, res) => {
+      try {
+        const topFilms = await this.controller.getTopFilms();
+        res.json(topFilms);
+      } catch (error) {
+        consoleLogger.error('[FilmsRoutes::GetTopFilms]', error);
+        res.status(500).json({ error: 'Failed to fetch top films' });
+      }
+    });
   }
 }
 

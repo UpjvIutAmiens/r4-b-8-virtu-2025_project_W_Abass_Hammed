@@ -8,12 +8,23 @@ import { v4 as uuidv4 } from 'uuid';
 const OMDb_API_KEY = process.env.OMDB_API_KEY!;
 const REDIS_URL = process.env.REDIS_URL!;
 
-interface FilmDetails {
+export interface FilmDetails {
   tconst: string;
-  title: string;
-  year: string;
-  director: string;
-  poster: string;
+  Title: string;
+  Year: string;
+  Rated: string;
+  Released: string;
+  Runtime: string;
+  Genre: string;
+  Director: string;
+  Writer: string;
+  Actors: string;
+  Plot: string;
+  Language: string;
+  Country: string;
+  Awards: string;
+  Poster: string;
+  Website: string;
 }
 
 interface RatingSummary {
@@ -69,10 +80,7 @@ export default class FilmsRepository {
 
     const filmDetails: FilmDetails = {
       tconst,
-      title: data.Title,
-      year: data.Year,
-      director: data.Director,
-      poster: data.Poster,
+      ...data,
     };
 
     await this.redis.set(cacheKey, JSON.stringify(filmDetails), 'EX', 86400);
