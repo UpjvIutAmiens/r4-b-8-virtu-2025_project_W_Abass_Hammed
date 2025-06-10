@@ -10,19 +10,13 @@ dotenv.config();
 import express, { type Application } from 'express';
 import { consoleLogger } from './src/services/logger';
 import Server from './src/routes/index';
-import films from './src/repositories/films';
 
 const app: Application = express();
 const port = process.env.PORT || 3000;
 new Server(app);
 
 app.get('/api', (req, res) => {
-  res.status(200).json({ message: 'Welcome to Géoserver' });
-});
-
-app.get('/api/test', async (req, res) => {
-  const result = await films.getTest();
-  res.status(200).json(result);
+  res.status(200).json({ message: 'Welcome to Film-o-mètre API' });
 });
 
 app.listen(port, () => {
