@@ -40,7 +40,7 @@ class FilmsRoutes {
         res.status(500).json({ error: 'Failed to fetch film rating' });
       }
     });
-    this.router.get('/top', async (req, res) => {
+    this.router.get('/top-rated', async (req, res) => {
       try {
         const topFilms = await this.controller.getTopFilms();
         res.json(topFilms);

@@ -1,6 +1,6 @@
-[![Quality Gate Status](https://sonarqube.delpech.info/api/project_badges/measure?project=UpjvIutAmiens_r4-b-8-virtu-2025_project_W_Abass_Hammed_7b5c0d02-fa79-4e68-9bbf-aba8d2f36cd7&metric=alert_status&token=sqb_5c0055004a0566f3f966c2de4c3d82bb279855e6)](https://sonarqube.delpech.info/dashboard?id=UpjvIutAmiens_r4-b-8-virtu-2025_project_W_Abass_Hammed_7b5c0d02-fa79-4e68-9bbf-aba8d2f36cd7)
-
 # 🎬 Film-o-mètre
+
+[![Quality Gate Status](https://sonarqube.delpech.info/api/project_badges/measure?project=UpjvIutAmiens_r4-b-8-virtu-2025_project_W_Abass_Hammed_7b5c0d02-fa79-4e68-9bbf-aba8d2f36cd7&metric=alert_status&token=sqb_5c0055004a0566f3f966c2de4c3d82bb279855e6)](https://sonarqube.delpech.info/dashboard?id=UpjvIutAmiens_r4-b-8-virtu-2025_project_W_Abass_Hammed_7b5c0d02-fa79-4e68-9bbf-aba8d2f36cd7)
 
 > Une application web conteneurisée permettant d'afficher un film aléatoire et de le noter, conçue selon les bonnes pratiques de conteneurisation et CI/CD.
 
@@ -86,3 +86,31 @@ flowchart LR
 - ✅ CI/CD GitHub Action pour auto-commit des données
 
 - ✅ Proxy inverse unique (port 80) via Caddy
+
+- ✅ Limitation des votes (localStorage)
+
+- ✅ Classement des films les mieux notés
+
+## 🧪 Endpoints Backend
+
+- GET /api/v1/film → film aléatoire
+
+- POST /api/v1/note → enregistrer une note
+
+- GET /api/v1/note/:id → moyenne des notes
+
+- GET /api/v1/top-rated → classement des films les mieux notés
+
+## 🔄 Mise à jour automatique des tconst (IMDb)
+
+Un script et une GitHub Action permettent de garder à jour les identifiants de films :
+
+📄 `scripts/download_tconst.sh` :
+
+- Télécharge les données IMDb
+- Génére `docker/postgres/tconst_list.txt`
+
+⚙️ `.github/workflows/update-data.yml`:
+
+- Planifiée chaque semaine (cron)
+- Commit automatique via `git-auto-commit-action`
