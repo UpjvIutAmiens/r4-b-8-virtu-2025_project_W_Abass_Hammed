@@ -46,7 +46,7 @@
     "lint": "eslint .",
     "lint:fix": "eslint . --fix",
     "lint-staged": "lint-staged",
-    "test": "jest --coverage",
+    "test": "jest --coverage --runInBand",
     "test:watch": "jest --watch"
   },
   "lint-staged": {
