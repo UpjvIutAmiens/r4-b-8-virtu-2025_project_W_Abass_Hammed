@@ -11,7 +11,7 @@ import express, { type Application } from 'express';
 import { consoleLogger } from './src/services/logger';
 import Server from './src/routes/index';
 
-const app: Application = express();
+export const app: Application = express();
 const port = process.env.PORT || 3000;
 new Server(app);
 
