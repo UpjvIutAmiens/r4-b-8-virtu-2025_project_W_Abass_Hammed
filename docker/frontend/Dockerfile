@@ -40,8 +40,7 @@ COPY --from=builder --chown=nextjs:nodejs /app/.next/static ./.next/static
 
 USER nextjs
 
-EXPOSE 5000
-
+# utilisation interne dans nextjs, rien à voir avec le port exposé
 ENV PORT=5000
 
 ENV HOSTNAME="0.0.0.0"

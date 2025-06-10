@@ -20,8 +20,6 @@ services:
         condition: service_healthy
     networks:
       - movie-network
-    expose:
-      - 3000
 
   postgres:
     build: ./postgres
@@ -80,8 +78,6 @@ services:
       - server
     networks:
       - movie-network
-    expose:
-      - 5000
 
 networks:
   movie-network:
