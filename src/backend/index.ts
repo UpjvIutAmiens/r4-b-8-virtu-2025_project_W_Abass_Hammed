@@ -20,5 +20,5 @@ app.get('/api', (req, res) => {
 });
 
 app.listen(port, () => {
-  consoleLogger.info(`Server is listening at http://localhost:${port}`);
+  consoleLogger.error(`Server is listening at http://localhost:${port}`);
 });

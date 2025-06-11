@@ -28,13 +28,13 @@ export interface FilmDetails {
   Website: string;
 }
 
-interface RatingSummary {
+export interface RatingSummary {
   tconst: string;
   averageRating: number;
   voteCount: number;
 }
 
-interface TopFilm extends FilmDetails, RatingSummary {}
+export interface TopFilm extends FilmDetails, RatingSummary {}
 
 export default class FilmsRepository {
   private query: <T extends QueryResultRow>(sql: string, params?: any[]) => Promise<T[]>;
@@ -140,11 +140,10 @@ export default class FilmsRepository {
           averageRating: film.avg,
           voteCount: film.count,
         });
-      } catch (error) {
+      } catch (error: any) {
         consoleLogger.error(`Skipping film ${film.tconst}:`, error.message);
       }
 
-      // Rate limiting: 2 requests per second (OMDb limit: 1000/day)
       await new Promise(resolve => setTimeout(resolve, 500));
     }
 

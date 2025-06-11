@@ -5,14 +5,6 @@ import { consoleLogger } from '../services/logger';
 //inspiration : https://github.com/supabase/postgres-meta/blob/master/src/lib/db.ts
 
 const configureTypeParsers = () => {
-  pg.types.setTypeParser(pg.types.builtins.INT8, x => {
-    const asNumber = Number(x);
-    if (Number.isSafeInteger(asNumber)) {
-      return asNumber;
-    } else {
-      return x;
-    }
-  });
   pg.types.setTypeParser(pg.types.builtins.DATE, x => x);
   pg.types.setTypeParser(pg.types.builtins.INTERVAL, x => x);
   pg.types.setTypeParser(pg.types.builtins.TIMESTAMP, x => x);
@@ -31,30 +23,7 @@ export default class Database {
   // the connection string while setting the rest in config.ssl.
   private parseSSLFromURL(config: pg.PoolConfig): pg.PoolConfig {
     const _config = { ...config };
-    if (_config.connectionString) {
-      const u = new URL(_config.connectionString);
-      const sslmode = u.searchParams.get('sslmode');
-      u.searchParams.delete('sslmode');
-      // For now, we don't support setting these from the connection string.
-      u.searchParams.delete('sslca');
-      u.searchParams.delete('sslkey');
-      u.searchParams.delete('sslcert');
-      u.searchParams.delete('sslrootcert');
-      _config.connectionString = u.toString();
 
-      // sslmode:    null, 'disable', 'prefer', 'require', 'verify-ca', 'verify-full', 'no-verify'
-      // config.ssl: true, false, {}
-      if (sslmode === null) {
-        // skip
-      } else if (sslmode === 'disable') {
-        _config.ssl = false;
-      } else {
-        if (typeof _config.ssl !== 'object') {
-          _config.ssl = {};
-        }
-        _config.ssl.rejectUnauthorized = sslmode === 'verify-full';
-      }
-    }
     return {
       max: 10,
       idleTimeoutMillis: 30000,
@@ -100,22 +69,6 @@ export default class Database {
         }
         formattedError += `LINE ${lineNumber}: ${line}
 ${' '.repeat(5 + lineNumber.toString().length + 2 + lineOffset)}^
-`;
-      }
-      if (error.detail) {
-        formattedError += `DETAIL:  ${error.detail}
-`;
-      }
-      if (error.hint) {
-        formattedError += `HINT:  ${error.hint}
-`;
-      }
-      if (error.internalQuery) {
-        formattedError += `QUERY:  ${error.internalQuery}
-`;
-      }
-      if (error.where) {
-        formattedError += `CONTEXT:  ${error.where}
 `;
       }
     }

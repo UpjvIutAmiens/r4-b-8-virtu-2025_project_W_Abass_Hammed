@@ -1,12 +1,18 @@
+/* eslint-disable @typescript-eslint/no-require-imports */
+const redisMock = {
+  get: jest.fn(),
+  set: jest.fn(),
+};
+
+jest.mock('ioredis', () => jest.fn().mockImplementation(() => redisMock));
+
 import request from 'supertest';
 import express from 'express';
 import { requireRequestId } from '../src/middlewares/base';
 import { v4 as uuidv4 } from 'uuid';
 import { consoleLogger } from '../src/services/logger';
-import type { SpiedFunction } from 'jest-mock';
 import filmsRoutes from '../src/routes/films';
 import FilmsRepository from '../src/repositories/films';
-import { describe, expect, test, jest, beforeAll, beforeEach } from '@jest/globals';
 
 describe('requireRequestId middleware', () => {
   let app: express.Express;
@@ -71,11 +77,9 @@ describe('dbConfig SSL parsing', () => {
 
 describe('Database class', () => {
   let mockQuery: jest.Mock;
-  let OriginalPool: any;
 
   beforeAll(() => {
     jest.resetModules();
-    OriginalPool = jest.requireActual('pg').Pool;
     mockQuery = jest.fn();
     jest.mock('pg', () => {
       const types = { setTypeParser: jest.fn(), builtins: {} };
@@ -98,13 +102,18 @@ describe('Database class', () => {
   test('query handles error and logs', async () => {
     const error = new Error('fail');
     mockQuery.mockRejectedValue(error);
-    const spy = jest.spyOn(consoleLogger, 'error').mockImplementation();
+    const spy = jest.spyOn(console, 'log').mockImplementation();
 
     const { default: DB } = require('../src/model/db');
     const db = new DB({} as any);
     const res = await db.query('SELECT 1');
     expect(res).toEqual([]);
-    expect(spy).toHaveBeenCalledWith('[Database Error]', error);
+    expect(spy).toHaveBeenCalledWith(
+      expect.stringContaining('[Filmomètre'),
+      '[Database Error]',
+      error,
+    );
+
     spy.mockRestore();
   });
 
@@ -135,22 +144,27 @@ describe('FilmsRepository', () => {
 
     mockQuery = jest.fn();
     jest.mock('../src/model/db', () => ({
-      default: jest.fn().mockImplementation(() => ({ query: mockQuery })),
+      __esModule: true,
+      default: class {
+        query = mockQuery;
+      },
     }));
   });
 
   beforeEach(() => {
     mockQuery.mockReset();
     redisMock = { get: jest.fn(), set: jest.fn() };
-    jest.mock('ioredis', () => jest.fn(() => redisMock));
 
-    // Create fetch mock
     fetchMock = require('node-fetch').default as jest.Mock;
 
-    // Initialize repository
     const FilmsRepo = require('../src/repositories/films').default;
     repo = new FilmsRepo();
   });
+
+  // afterAll(() => {
+  //   jest.clearAllTimers();
+  //   jest.clearAllMocks();
+  // });
 
   test('getRandomFilm throws if none', async () => {
     mockQuery.mockResolvedValue([]);
@@ -158,8 +172,8 @@ describe('FilmsRepository', () => {
   });
 
   test('getFilmDetails caches and fetches', async () => {
-    const data = { Title: 'A', Year: '2020', Response: 'True' };
-    mockQuery.mockResolvedValue([{ tconst: 'tt1' }]);
+    const data = { Title: 'Inception', Year: '2020', Response: 'True' };
+    mockQuery.mockResolvedValue([{ tconst: 'tt1375666' }]);
     redisMock.get.mockReturnValue(null);
     fetchMock.mockResolvedValue({
       ok: true,
@@ -270,11 +284,7 @@ describe('FilmsRoutes', () => {
 });
 
 describe('ConsoleLogger', () => {
-  let spy: SpiedFunction<{
-    (...data: any[]): void;
-    (...data: any[]): void;
-    (message?: any, ...optionalParams: any[]): void;
-  }>;
+  let spy: jest.SpyInstance;
 
   beforeEach(() => {
     spy = jest.spyOn(console, 'log').mockImplementation();
