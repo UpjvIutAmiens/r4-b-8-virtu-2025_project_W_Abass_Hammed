@@ -12,7 +12,7 @@ import { consoleLogger } from './src/services/logger';
 import Server from './src/routes/index';
 
 export const app: Application = express();
-const port = process.env.PORT || 3000;
+const port = process.env.PORT ?? 3000;
 new Server(app);
 
 app.get('/api', (req, res) => {

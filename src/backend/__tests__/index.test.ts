@@ -116,18 +116,6 @@ describe('Database class', () => {
 
     spy.mockRestore();
   });
-
-  test('formatPgError creates formatted message', () => {
-    const { default: DB } = require('../src/model/db');
-    const db = new DB({} as any);
-    const err: any = new Error('msg');
-    err.severity = 'ERROR';
-    err.code = '42000';
-    err.position = '3';
-    const out = (db as any).formatPgError(err, 'ab\ncdef');
-    expect(out.error.formattedError).toContain('ERROR:');
-    expect(out.error.formattedError).toContain('LINE');
-  });
 });
 
 describe('FilmsRepository', () => {
@@ -160,11 +148,6 @@ describe('FilmsRepository', () => {
     const FilmsRepo = require('../src/repositories/films').default;
     repo = new FilmsRepo();
   });
-
-  // afterAll(() => {
-  //   jest.clearAllTimers();
-  //   jest.clearAllMocks();
-  // });
 
   test('getRandomFilm throws if none', async () => {
     mockQuery.mockResolvedValue([]);

@@ -37,8 +37,8 @@ export interface RatingSummary {
 export interface TopFilm extends FilmDetails, RatingSummary {}
 
 export default class FilmsRepository {
-  private query: <T extends QueryResultRow>(sql: string, params?: any[]) => Promise<T[]>;
-  private redis: Redis;
+  private readonly query: <T extends QueryResultRow>(sql: string, params?: any[]) => Promise<T[]>;
+  private readonly redis: Redis;
 
   constructor() {
     const db = new Database(dbConfig);
@@ -73,7 +73,7 @@ export default class FilmsRepository {
       throw new Error(`OMDb API error: ${response.statusText}`);
     }
 
-    const data = (await response.json()) as any;
+    const data = await response.json();
 
     if (data.Response === 'False') {
       throw new Error(`OMDb error: ${data.Error}`);

@@ -3,16 +3,10 @@ import cors, { type CorsOptions } from 'cors';
 import { requireRequestId } from '../middlewares/base';
 import filmsRoutes from './films';
 
-class Routes {
-  constructor(app: Application) {
-    app.use('/api/v1', filmsRoutes);
-  }
-}
-
 export default class Server {
   constructor(app: Application) {
     this.config(app);
-    new Routes(app);
+    app.use('/api/v1', filmsRoutes);
   }
 
   private config(app: Application): void {
