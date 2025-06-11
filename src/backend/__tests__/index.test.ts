@@ -1,4 +1,5 @@
 /* eslint-disable @typescript-eslint/no-require-imports */
+
 const redisMock = {
   get: jest.fn(),
   set: jest.fn(),
@@ -121,7 +122,6 @@ describe('Database class', () => {
 describe('FilmsRepository', () => {
   let repo: FilmsRepository;
   let mockQuery: jest.Mock;
-  let redisMock: any;
   let fetchMock: jest.Mock;
 
   beforeAll(() => {
@@ -140,10 +140,11 @@ describe('FilmsRepository', () => {
   });
 
   beforeEach(() => {
-    mockQuery.mockReset();
-    redisMock = { get: jest.fn(), set: jest.fn() };
-
+    jest.clearAllMocks();
     fetchMock = require('node-fetch').default as jest.Mock;
+
+    redisMock.get = jest.fn();
+    redisMock.set = jest.fn();
 
     const FilmsRepo = require('../src/repositories/films').default;
     repo = new FilmsRepo();
